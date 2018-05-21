@@ -74,7 +74,7 @@ function createPages(pages) {
     }
 
     // make first button active
-    // document.querySelectorAll('.pagination ul li a')[0].className = "active";   
+    document.querySelectorAll('.pagination ul li a')[0].className = "active";   
 }
 
 function removePageLinks() {
@@ -110,6 +110,8 @@ function toggleActive(a) {
 
 // show the page specific people
 function showPeople(a) {
+
+    if(matchedStudents.length == 0){
         let newPageMax = a * x;
         let newPageMin = newPageMax - x;
 
@@ -127,6 +129,27 @@ function showPeople(a) {
         {
             document.querySelectorAll('li')[i].style.display = 'block';
         }
+    }
+    else {
+        let newPageMax = a * x;
+        let newPageMin = newPageMax - x;
+
+        if(newPageMax>matchedStudents.length){
+            newPageMax = matchedStudents.length;
+        }
+        
+        // hide old 
+        for( let i = 0; i < studentList; i+=1)
+        {
+            document.querySelectorAll('li')[i].style.display = 'none';
+        }
+        // show new
+        for( let i = newPageMin; i < newPageMax; i+=1)
+        {
+            var studentMatched = matchedStudents[i];
+            document.querySelectorAll('li')[studentMatched].style.display = 'block';
+        }
+    }
 }
 
 function createSearch() {
@@ -201,7 +224,8 @@ function displayMatch(studentName) {
             }
             matchedStudents.push(i);
         }
-    }   
+    }
+    console.log(matchedStudents);   
 
     if(matchedStudents.length == 0) {
     noStudents.style.display = 'block';
