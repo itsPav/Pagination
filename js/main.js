@@ -9,13 +9,21 @@ const studentList = listItems.length;
 const x = 10;
 
 // determine num of pages
-const pages = studentList / x;
+let pages = studentList / x;
+var noStudents;
+// search match students
+var matchedStudents = [];
 
-createSearch();
-showPage(pages,studentList);
-appendPageLinks();
+firstPage();
 
-function showPage(pages, studentList) {
+function firstPage() {
+    createSearch();
+    createNoMatch();
+    showStudents(pages,studentList);
+    appendPageLinks();
+}
+
+function showStudents(pages, studentList) {
     
     // hide all list items
     hideStudents(studentList);
@@ -45,6 +53,10 @@ function appendPageLinks() {
     document.getElementsByClassName('pagination')[0].appendChild(paginationUL);
     document.querySelector('.pagination').addEventListener('click', selectPage);
 
+    createPages(pages);
+}
+
+function createPages(pages) {
     // loop to create lis in the ul
     for (let i = 0; i < pages; i += 1)
     {
@@ -60,18 +72,24 @@ function appendPageLinks() {
         liLink.setAttribute('href', '#');
         document.querySelectorAll('.pagination ul li')[i].appendChild(liLink);   
     }
+
+    // make first button active
+    // document.querySelectorAll('.pagination ul li a')[0].className = "active";   
 }
 
-
-// make first button active
-document.querySelectorAll('.pagination ul li a')[0].className = "active";   
+function removePageLinks() {
+    var myNode = document.querySelector(".pagination ul");
+    while (myNode.firstChild) {
+        myNode.removeChild(myNode.firstChild);
+    }
+}
 
 // check which button was clicked
 function selectPage(event) {
     let a = parseInt(event.target.text);
     // console.log(a);
 
-    noStudents.style.display = 'none';
+    // noStudents.style.display = 'none';
     // need to make current button active
     toggleActive(a);
 
@@ -92,23 +110,23 @@ function toggleActive(a) {
 
 // show the page specific people
 function showPeople(a) {
-    let newPageMax = a * x;
-    let newPageMin = newPageMax - x;
+        let newPageMax = a * x;
+        let newPageMin = newPageMax - x;
 
-    if(newPageMax>studentList){
-        newPageMax = studentList;
-    }
-    
-    // hide old 
-    for( let i = 0; i < studentList; i+=1)
-    {
-        document.querySelectorAll('li')[i].style.display = 'none';
-    }
-    // show new
-    for( let i = newPageMin; i < newPageMax; i+=1)
-    {
-        document.querySelectorAll('li')[i].style.display = 'block';
-    }
+        if(newPageMax>studentList){
+            newPageMax = studentList;
+        }
+        
+        // hide old 
+        for( let i = 0; i < studentList; i+=1)
+        {
+            document.querySelectorAll('li')[i].style.display = 'none';
+        }
+        // show new
+        for( let i = newPageMin; i < newPageMax; i+=1)
+        {
+            document.querySelectorAll('li')[i].style.display = 'block';
+        }
 }
 
 function createSearch() {
@@ -128,53 +146,76 @@ function createSearch() {
     studentButton.addEventListener('click', searchStudents);
 }
 
+function createNoMatch(){
+    // add div that says 'no matching students'
+    noStudents = document.createElement('DIV');
+    noStudents.innerHTML = "No students found.";
+    document.querySelector('.student-list').appendChild(noStudents);
+    // turn it off
+    noStudents.style.display = 'none';
+}
+
 function searchStudents(){
+    // delete all created pagination
+    removePageLinks();
 
     // get the value from the input field
     var studentName = document.getElementsByTagName("input")[0].value;
+    document.getElementsByTagName("input")[0].value = '';
 
     // hide all students
     hideStudents(studentList);
 
     // check students name or email
     displayMatch(studentName);
-}
 
-// add div that says 'no matching students'
-var noStudents = document.createElement('DIV');
-noStudents.innerHTML = "No students found.";
-document.querySelector('.student-list').appendChild(noStudents);
-// turn it off
-noStudents.style.display = 'none';
+    // create new pagination
+    if(matchedStudents.length > x){
+        pages = matchedStudents.length / x;
+        createPages(pages);
+        toggleActive(1);
+    }
+}
 
 function displayMatch(studentName) {
 
-    if(studentName.length < 1){
-        noStudents.style.display = 'block';
-        return;
-    }
+    matchedStudents = [];
+    // if(studentName.length < 1){
+    //     noStudents.style.display = 'block';
+    //     return;
+    // }
 
-    noStudents.style.display = 'display';
+    // noStudents.style.display = 'display';
     
     // count matching students
     for (let i = 0; i < studentList; i += 1)
     {
-        var matchedStudents = 0;
-        // check if student name or email matches input value
+        // check if student name or email matches input value 
         if(document.querySelectorAll('h3')[i].innerHTML.includes(studentName) || document.querySelectorAll('.email')[i].innerHTML.includes(studentName))
         {
-            document.querySelectorAll('li')[i].style.display = 'block';
-            matchedStudents += 1;
+            if(matchedStudents.length<10){
+                document.querySelectorAll('li')[i].style.display = 'block';
+            }
+            else {
+                document.querySelectorAll('li')[i].style.display = 'none';
+            }
+            matchedStudents.push(i);
         }
     }   
 
-    // if student does not exist, don't show "no match" text
-    for (let i = 0; i < studentList; i += 1) {
-        if(document.querySelectorAll('li')[i].style.display == 'block') {
-            noStudents.style.display = 'none';
-            return;
-        } else {
-            noStudents.style.display = 'block';
-        }
+    if(matchedStudents.length == 0) {
+    noStudents.style.display = 'block';
+    matchedStudents = [];
     }
+    else
+    noStudents.style.display = 'none';
+    // // if student does not exist, don't show "no match" text
+    // for (let i = 0; i < studentList; i += 1) {
+    //     if(document.querySelectorAll('li')[i].style.display == 'block') {
+    //         noStudents.style.display = 'none';
+    //         return;
+    //     } else {
+    //         noStudents.style.display = 'block';
+    //     }
+    // }
 }
