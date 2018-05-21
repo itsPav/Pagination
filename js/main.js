@@ -10,12 +10,16 @@ const x = 10;
 
 // determine num of pages
 let pages = studentList / x;
+
+// declaring no students variable globally to use it in several functions
 var noStudents;
 // search match students
 var matchedStudents = [];
 
+// calling function to start the page
 firstPage();
 
+// function that loads everything on start
 function firstPage() {
     createSearch();
     createNoMatch();
@@ -23,6 +27,7 @@ function firstPage() {
     appendPageLinks();
 }
 
+// function to hide all students and then show x items per page
 function showStudents(pages, studentList) {
     
     // hide all list items
@@ -35,6 +40,7 @@ function showStudents(pages, studentList) {
     }
 }
 
+// function to hide all students
 function hideStudents(studentList) {
     for( let i = 0; i < studentList; i+=1)
     {
@@ -42,6 +48,7 @@ function hideStudents(studentList) {
     }
 }
 
+// function to append page links
 function appendPageLinks() {
     // add pagination after ul element
     var pagination = document.createElement('DIV');
@@ -56,6 +63,7 @@ function appendPageLinks() {
     createPages(pages);
 }
 
+// function to create li elements in the ul
 function createPages(pages) {
     // loop to create lis in the ul
     for (let i = 0; i < pages; i += 1)
@@ -77,6 +85,7 @@ function createPages(pages) {
     document.querySelectorAll('.pagination ul li a')[0].className = "active";   
 }
 
+// function to remove page links to deal with dynamic search
 function removePageLinks() {
     var myNode = document.querySelector(".pagination ul");
     while (myNode.firstChild) {
@@ -96,6 +105,7 @@ function selectPage(event) {
     showPeople(a);
 }
 
+// function to make clicked button active
 function toggleActive(a) {
 
     // loop through all page buttons and make not active
@@ -152,6 +162,7 @@ function showPeople(a) {
     }
 }
 
+// function to append search elements
 function createSearch() {
     var studentSearch = document.createElement('DIV');
     studentSearch.className = "student-search";
@@ -169,6 +180,7 @@ function createSearch() {
     studentButton.addEventListener('click', searchStudents);
 }
 
+// function to append "no results" div
 function createNoMatch(){
     // add div that says 'no matching students'
     noStudents = document.createElement('DIV');
@@ -178,6 +190,7 @@ function createNoMatch(){
     noStudents.style.display = 'none';
 }
 
+// function that is called upon search button click
 function searchStudents(){
     // delete all created pagination
     removePageLinks();
@@ -203,12 +216,6 @@ function searchStudents(){
 function displayMatch(studentName) {
 
     matchedStudents = [];
-    // if(studentName.length < 1){
-    //     noStudents.style.display = 'block';
-    //     return;
-    // }
-
-    // noStudents.style.display = 'display';
     
     // count matching students
     for (let i = 0; i < studentList; i += 1)
@@ -233,13 +240,4 @@ function displayMatch(studentName) {
     }
     else
     noStudents.style.display = 'none';
-    // // if student does not exist, don't show "no match" text
-    // for (let i = 0; i < studentList; i += 1) {
-    //     if(document.querySelectorAll('li')[i].style.display == 'block') {
-    //         noStudents.style.display = 'none';
-    //         return;
-    //     } else {
-    //         noStudents.style.display = 'block';
-    //     }
-    // }
 }
